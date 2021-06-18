@@ -1,4 +1,4 @@
-example
+web-server
 
 node_modules
 
@@ -8,6 +8,4 @@ package.json
 
 package-lock.json
 
-web-server
 
-.vscode
