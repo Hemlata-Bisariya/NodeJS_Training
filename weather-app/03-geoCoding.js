@@ -10,7 +10,7 @@ const geoCodingURL =
   request({ url: geoCodingURL, json: true }, (error, response) => {
   if (error) {
     console.log("Unable to connect to location services...");
-  } else if (response.body.features.length === 0) {
+  } else if (!response.body.features.length) {
     console.log("Unable to find search, Try another search...");
   } else {
     const latitude = response.body.features[0].center[0];
@@ -22,4 +22,5 @@ const geoCodingURL =
         chalk.yellow.bold(longitude)
     );
   }
+  
 });

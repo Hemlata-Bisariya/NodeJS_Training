@@ -20,6 +20,3 @@ The first is a callback function.
 This function will run after the specified amount of time has passed.
 The second argument is the amount of time in milliseconds to wait.
 */
-
-
-
