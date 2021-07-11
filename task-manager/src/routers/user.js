@@ -3,12 +3,11 @@ const multer = require("multer");
 const User = require("../models/user");
 const auth = require("../middleware/auth");
 const sharp = require("sharp");
-const { sendWelcomeEmail } = require("../emails/account");
+const { sendWelcomeEmail, sendCancelationEmail } = require("../emails/account");
 const router = new express.Router();
 
 router.post("/users", async (req, res) => {
   const user = new User(req.body);
-
   try {
     await user.save();
     sendWelcomeEmail(user.email, user.name);
@@ -28,7 +27,7 @@ router.post("/users/login", async (req, res) => {
     const token = await user.generateAuthToken();
     res.send({ user, token });
   } catch (e) {
-    res.status(400).send(e);
+    res.status(400).send();
   }
 });
 
@@ -56,16 +55,9 @@ router.post("/users/logoutAll", auth, async (req, res) => {
 
 router.get("/users/me", auth, async (req, res) => {
   res.send(req.user);
-
-  // try {
-  //   const user = await User.find({});
-  //   res.status(201).send(user);
-  // } catch (e) {
-  //   res.status(500).send(e);
-  // }
 });
 
-router.patch("/users/me", async (req, res) => {
+router.patch("/users/me", auth, async (req, res) => {
   const updates = Object.keys(req.body);
   const alloweUpdates = ["name", "email", "password", "age"];
   const isValidOpration = updates.every((update) =>
@@ -79,11 +71,6 @@ router.patch("/users/me", async (req, res) => {
   try {
     updates.forEach((update) => (req.user[update] = req.body[update]));
     await req.user.save();
-    // const user = await User.findByIdAndUpdate(req.params.id, req.body, {
-    //   new: true,
-    //   runValidators: true,
-    // });
-
     res.send(req.user);
   } catch (e) {
     res.status(404).send(e);
@@ -92,27 +79,19 @@ router.patch("/users/me", async (req, res) => {
 
 router.delete("/users/me", auth, async (req, res) => {
   try {
-    // const user = await User.findByIdAndDelete(req.user._id);
-    // if (!user) {
-    //   return res.status(404).send();
-    // }
     await req.user.remove();
-    res.status(201).send(req.user);
+    sendCancelationEmail(req.user.email, req.user.name);
+    res.send(req.user);
   } catch (e) {
-    res.status(500).send(e);
+    res.status(500).send();
   }
 });
 
 const upload = multer({
-  // dest : "avatars",
   limits: {
     fileSize: 1000000,
   },
   fileFilter(req, file, cb) {
-    // if (!file.originalname.endsWith(".pdf")) {
-    //   return cb(new Error("PLease upload a PDF"));
-    // }
-
     if (!file.originalname.match(/\.(jpg|jpeg|png)$/)) {
       return cb(new Error("PLease upload an image"));
     }
