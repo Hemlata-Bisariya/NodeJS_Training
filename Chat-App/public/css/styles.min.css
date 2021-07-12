@@ -38,7 +38,7 @@ button {
   transition: background 0.3s ease;
 }
 button:hover {
-  background: #6b47b8;
+  background: #504666;
 }
 button:disabled {
   cursor: default;

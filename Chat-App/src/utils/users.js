@@ -49,34 +49,9 @@ const removeUser = (id) => {
   }
 };
 
-addUser({
-  id: 22,
-  username: "Hemlata Bisariya",
-  room: "hello-User",
-});
-
-addUser({
-  id: 33,
-  username: "Tineshwar Bisariya",
-  room: "H&T",
-});
-
-addUser({
-  id: 44,
-  username: "Dimpy Bisariya",
-  room: "hello-User",
-});
-
-addUser({
-  id: 55,
-  username: "Jyoti Bisariya",
-  room: "H&T",
-});
-
-console.log(users);
-
-const user = getUser(33);
-console.log(user);
-
-const userList = getUsersInRoom("H&T");
-console.log(userList);
+module.exports = {
+    addUser ,
+    getUser,
+    getUsersInRoom,
+    removeUser
+}
